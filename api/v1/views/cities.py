@@ -47,11 +47,11 @@ def city_retrieval(state_id=None):
                  strict_slashes=False)
 def delete_city(city_id=None):
     """Deletes a City object"""
-    object = storage.get('City', city_id)
-    if object is None:
+    objects = storage.get('City', city_id)
+    if objects is None:
         abort(404)  # if the city_id is not linked to any City object
     else:
-        storage.delete(object)
+        storage.delete(objects)
         storage.save()
     return jsonify({}), 200  # returns an empty dict with status code 200
 
@@ -67,12 +67,12 @@ def create_city(state_id=None):
     body = request.get_json()  # transfrom the HTTP body request to dict
     if body is None:  # if HTTP body req is  not a valid JSON
         return jsonify({"error": "Not a JSON"}), 400
-    if 'name' not in task:  # if dict doesn't contain the key name
+    if 'name' not in body:  # if dict doesn't contain the key name
         return jsonify({"error": "Missing name"}), 400
-    object = City(name=body['name'], state_id=state_id)
-    storage.new(object)
+    objects = City(name=body['name'], state_id=state_id)
+    storage.new(objects)
     storage.save()
-    return jsonify(object.to_dict()), 201  # returns new City
+    return jsonify(objects.to_dict()), 201  # returns new City
 
 
 @app_views.route('/cities/<city_id>', methods=['PUT'], strict_slashes=Flashes)
@@ -81,12 +81,12 @@ def update_city(city_id=None):
     body = request.get_json()
     if body is None:
         return jsonify({"error": "Not a JSON"}), 400
-    object = storage.get('City', city_id)
-    if object is None:  # if city_id is not linked to any City object
+    objects = storage.get('City', city_id)
+    if objects is None:  # if city_id is not linked to any City object
         abort(404)
     ignore_keys = ['id', 'state_id', 'created_at', 'updated_at']  # ignore keys
     for key, value in body.items():  # update City obj with key-val pairs
         if key not in ignore_keys:
-            setattr(object, key, value)
+            setattr(objects, key, value)
     storage.save()
-    return jsonify(object.to_dict()), 200  # return City obj
+    return jsonify(objects.to_dict()), 200  # return City obj

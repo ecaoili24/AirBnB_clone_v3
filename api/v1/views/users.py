@@ -40,11 +40,11 @@ def user_retrieval(user_id=None):
                  strict_slashes=False)
 def delete_user(user_id=None):
     """Deletes a User object"""
-    object = storage.get('User', user_id)
-    if object is None:
+    objects = storage.get('User', user_id)
+    if objects is None:
         abort(404)  # if the user_id is not linked to any User object
     else:
-        storage.delete(object)
+        storage.delete(objects)
         storage.save()
     return jsonify({}), 200  # returns an empty dict with status code 200
 
@@ -59,27 +59,27 @@ def create_user():
         abort(400, {"Missing email"})  # raise err and message
     if 'password' not in body:  # if the dict doesn't contain the key passwd
         abort(400, {"Missing password"})  # raise err and message
-    object = User()
+    objects = User()
     for key, value in body.items():
-        setattr(object, key, value)
-    storage.new(object)
+        setattr(objects, key, value)
+    storage.new(objects)
     storage.save()
-    return jsonify(object.to_dict()), 201  # returns new User
+    return jsonify(objects.to_dict()), 201  # returns new User
 
 
 @app_views.route('/users/<user_id>', methods=['PUT'],
-                 strict_slashes=Flashes)
+                 strict_slashes=False)
 def update_user(user_id=None):
     """Updating an existing Amenity object"""
     body = request.get_json()
     if not body:
         abort(400, {"Not a JSON"})
-    object = storage.get('User', user_id)
-    if object is None:  # if user_id is not linked to any User object
+    objects = storage.get('User', user_id)
+    if objects is None:  # if user_id is not linked to any User object
         abort(404)
     ignore_keys = ['id', 'email', 'created_at', 'updated_at']  # ignore keys
     for key, value in body.items():  # update User obj with key-val pairs
         if key not in ignore_keys:
-            setattr(object, key, value)
+            setattr(objects, key, value)
     storage.save()
-    return jsonify(object.to_dict()), 200  # return User obj
+    return jsonify(objects.to_dict()), 200  # return User obj
