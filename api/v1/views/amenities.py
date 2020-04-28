@@ -19,7 +19,7 @@ def get_amenities(state_id=None):
     """List retrieval of all Amenity objects of a State"""
     a_all = storage.all('Amenity')  # a_all = all Amenity objects
     amentityLIST = []
-    for a_all is a_all.values():
+    for a_all in a_all.values():
         amentityLIST.append(a_all.to_dict())
     return jsonify(amentityLIST), 200
 

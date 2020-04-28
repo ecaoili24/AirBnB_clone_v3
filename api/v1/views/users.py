@@ -9,7 +9,7 @@ import os
 from flask import Flask, jsonify, abort, request
 from models import storage
 from api.v1.views import app_views
-from models.users import User
+from models.user import User
 
 app = Flask(__name__)
 
@@ -19,7 +19,7 @@ def get_users(state_id=None):
     """List retrieval of all User objects of a State"""
     users_all = storage.all('User')
     usersLIST = []
-    for users_all is users_all.values():
+    for users_all in users_all.values():
         usersLIST.append(user_all.to_dict())
     return jsonify(usersLIST), 200
 
