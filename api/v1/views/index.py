@@ -24,6 +24,7 @@ def status():
 
 @app_views.route('/stats')
 def stat():
+    """Creates an endpoint that retrieves the # of each obj by type"""
     class_all = {"amenities": "Amenity", "cities": "City", "places": "Place",
                  "reviews": "Review", "states": "State", "users": "User"}
 

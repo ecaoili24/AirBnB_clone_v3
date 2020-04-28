@@ -1,5 +1,9 @@
 #!/usr/bin/python3
-"""A script that starts a Flask web application"""
+"""
+A script that starts a Flask web application.
+Create a new view for City objects that handles
+all default RESTful API actions:
+"""
 
 import os
 from flask import Flask, jsonify, abort, request
@@ -65,7 +69,7 @@ def create_city(state_id=None):
         return jsonify({"error": "Not a JSON"}), 400
     if 'name' not in task:  # if dict doesn't contain the key name
         return jsonify({"error": "Missing name"}), 400
-    object = City(name=task['name'], state_id=state_id)
+    object = City(name=body['name'], state_id=state_id)
     storage.new(object)
     storage.save()
     return jsonify(object.to_dict()), 201  # returns new City
@@ -80,8 +84,8 @@ def update_city(city_id=None):
     object = storage.get('City', city_id)
     if object is None:  # if city_id is not linked to any City object
         abort(404)
-    ignore_keys = ['id', 'created_at', 'updated_at']  # ignore keys
-    for key, value in task.items():  # update City obj with key-val pairs
+    ignore_keys = ['id', 'state_id', 'created_at', 'updated_at']  # ignore keys
+    for key, value in body.items():  # update City obj with key-val pairs
         if key not in ignore_keys:
             setattr(object, key, value)
     storage.save()
