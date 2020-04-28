@@ -56,7 +56,7 @@ def delete_city(city_id=None):
     return jsonify({}), 200  # returns an empty dict with status code 200
 
 
-@app_views.route('/states/<state_id>/cities', method=['POST'],
+@app_views.route('/states/<state_id>/cities', methods=['POST'],
                  strict_slashes=False)
 def create_city(state_id=None):
     """Create a City, from data provided by the request"""

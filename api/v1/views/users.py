@@ -49,7 +49,7 @@ def delete_user(user_id=None):
     return jsonify({}), 200  # returns an empty dict with status code 200
 
 
-@app_views.route('/users', method=['POST'], strict_slashes=False)
+@app_views.route('/users', methods=['POST'], strict_slashes=False)
 def create_user():
     """Create a User, from data provided by the request"""
     body = request.get_json()  # transfrom the HTTP body request to dict

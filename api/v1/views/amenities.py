@@ -49,7 +49,7 @@ def delete_amenity(amenity_id=None):
     return jsonify({}), 200  # returns an empty dict with status code 200
 
 
-@app_views.route('/amenities', method=['POST'], strict_slashes=False)
+@app_views.route('/amenities', methods=['POST'], strict_slashes=False)
 def create_amenity():
     """Create an Amenity, from data provided by the request"""
     body = request.get_json()  # transfrom the HTTP body request to dict
