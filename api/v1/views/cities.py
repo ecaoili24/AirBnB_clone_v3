@@ -78,15 +78,15 @@ def create_city(state_id=None):
 @app_views.route('/cities/<city_id>', methods=['PUT'], strict_slashes=False)
 def update_city(city_id=None):
     """Updating an existing City object"""
-    body = request.get_json()
+    objects = storage.get("City", city_id)
+    if objects is None:
+        abort(404)
+    body = request.get_json(force=True)
     if body is None:
         return jsonify({"error": "Not a JSON"}), 400
-    objects = storage.get('City', city_id)
-    if objects is None:  # if city_id is not linked to any City object
-        abort(404)
-    ignore_keys = ['id', 'state_id', 'created_at', 'updated_at']  # ignore keys
-    for key, value in body.items():  # update City obj with key-val pairs
+    ignore_keys = ['state_id', 'created_at', 'updated_at']
+    for key, value in body.items():
         if key not in ignore_keys:
-            setattr(objects, key, value)
+            setattr(city, key, value, id)
     storage.save()
-    return jsonify(objects.to_dict()), 200  # return City obj
+    return jsonify(city.to_dict()), 200
