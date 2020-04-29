@@ -33,7 +33,7 @@ def get_cities(state_id=None):
 
 
 @app_views.route('/cities/<city_id>', methods=['GET'], strict_slashes=False)
-def city_retrieval(state_id=None):
+def city_retrieval(city_id=None):
     """Retrieval of City objects with linked ids"""
     city_dict = storage.all('City')
     city = city_dict.get('City' + "." + city_id)
