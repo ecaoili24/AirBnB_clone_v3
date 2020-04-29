@@ -73,14 +73,14 @@ class FileStorage:
         """returns object with key matching cls and id"""
         if cls is not None and id is not None:
             test = self.all(cls)
-            word = "State.{}".format(id)
+            word = "{}.{}".format(cls.__name__, id)
             for key, val in test.items():
                 if key == word:
                     return (val)
             return (None)
 
     def count(self, cls=None):
-        """counts objects in storage matching optional with cls"""
+        """counts objects in storage optionally matching optional with cls"""
         if cls is None:
             return (len(self.all()))
         else:
