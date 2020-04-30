@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+
 """
 Create a new view for City objects that handles
 all default RESTful API actions:
@@ -58,11 +59,12 @@ def create_city(state_id):
     body = request.get_json(silent=True)  # transfrom the HTTP body req to dict
     if body is None:  # if HTTP body req is  not a valid JSON
         return jsonify({"error": "Not a JSON"}), 400
-    elif 'name' not in body:  # if dict doesn't contain the key name
+    if body.get("name") is None:  # if dict doesn't contain the key name
         return jsonify({"error": "Missing name"}), 400
-    name = request.get_json().get('name')
-    city_new = City(name=name, state_id=state_id)
-    city_new.save()
+    body['state_id'] = state_id
+    city_new = City(**body)
+    storage.new(city_new)
+    storage.save()
     return jsonify(city_new.to_dict()), 201  # returns new City
 
 

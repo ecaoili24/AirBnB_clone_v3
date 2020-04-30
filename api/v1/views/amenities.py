@@ -1,17 +1,13 @@
 #!/usr/bin/python3
 """
-A script that starts a Flask web application.
 Create a new view for Amenity objects that handles
 all default RESTful API actions
 """
 
-import os
 from flask import Flask, jsonify, abort, request
 from models import storage
 from api.v1.views import app_views
 from models.amenity import Amenity
-
-app = Flask(__name__)
 
 
 @app_views.route('/amenities', methods=['GET'], strict_slashes=False)
