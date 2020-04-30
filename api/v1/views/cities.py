@@ -24,7 +24,7 @@ def get_all_cities(state_id):
 
 
 @app_views.route('/cities/<city_id>', methods=['GET'], strict_slashes=False)
-def city_retrieval(city_id=None):
+def city_retrieval(city_id):
     """Retrieval of City objects with linked ids"""
     city = storage.get('City', city_id)
     if city is None:  # if state_id is not linked to any State obj
@@ -35,7 +35,7 @@ def city_retrieval(city_id=None):
 
 @app_views.route('/cities/<city_id>', methods=['DELETE'],
                  strict_slashes=False)
-def delete_city(city_id=None):
+def delete_city(city_id):
     """Deletes a City object"""
     bye_city = storage.get('City', city_id)
     if bye_city is None:
@@ -48,12 +48,12 @@ def delete_city(city_id=None):
 
 @app_views.route('/states/<state_id>/cities', methods=['POST'],
                  strict_slashes=False)
-def create_city(state_id=None):
+def create_city(state_id):
     """Create a City, from data provided by the request"""
     state = storage.get('State', state_id)
     if state is None:
         abort(404)
-    body = request.get_json(silent=True)  # transfrom the HTTP body req to dict
+    body = request.get_json()  # transfrom the HTTP body req to dict
     if body is None:  # if HTTP body req is  not a valid JSON
         return jsonify({"error": "Not a JSON"}), 400
     if 'name' not in body:  # if dict doesn't contain the key name
@@ -66,7 +66,7 @@ def create_city(state_id=None):
 
 
 @app_views.route('/cities/<city_id>', methods=['PUT'], strict_slashes=False)
-def update_city(city_id=None):
+def update_city(city_id):
     """Updating an existing City object"""
     obj = storage.get('City', city_id)
     if obj is None:
