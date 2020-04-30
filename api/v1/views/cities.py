@@ -40,9 +40,8 @@ def delete_city(city_id):
     bye_city = storage.get('City', city_id)
     if bye_city is None:
         abort(404)  # if the city_id is not linked to any City object
-    else:
-        storage.delete(bye_city)
-        storage.save()
+    storage.delete(bye_city)
+    storage.save()
     return jsonify({}), 200  # returns an empty dict with status code 200
 
 
@@ -56,7 +55,7 @@ def create_city(state_id):
     body = request.get_json(silent=True)  # transfrom the HTTP body req to dict
     if body is None:  # if HTTP body req is  not a valid JSON
         return jsonify({"error": "Not a JSON"}), 400
-    if 'name' not in body:  # if dict doesn't contain the key name
+    elif 'name' not in request.json:  # if dict doesn't contain the key name
         return jsonify({"error": "Missing name"}), 400
     body['state_id'] = state_id
     city_new = City(**body)
@@ -68,12 +67,12 @@ def create_city(state_id):
 @app_views.route('/cities/<city_id>', methods=['PUT'], strict_slashes=False)
 def update_city(city_id):
     """Updating an existing City object"""
+    body = request.get_json(silent=True)
+    if body is None:
+        return jsonify({"error": "Not a JSON"}), 400
     obj = storage.get('City', city_id)
     if obj is None:
         abort(404)
-    body = request.get_json()
-    if body is None:
-        return jsonify({"error": "Not a JSON"}), 400
     ignore_keys = ['id', 'state_id', 'created_at', 'updated_at']
     for key, value in body.items():
         if key not in ignore_keys:
