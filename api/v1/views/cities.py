@@ -4,9 +4,9 @@ Create a new view for City objects that handles
 all default RESTful API actions:
 """
 
+from api.v1.views import app_views
 from flask import Flask, jsonify, abort, request
 from models import storage
-from api.v1.views import app_views
 from models.state import State
 from models.city import City
 
@@ -18,9 +18,11 @@ def get_all_cities(state_id):
     s = storage.get('State', state_id)  # s = states
     if s is None:
         abort(404)
-    cities_all = storage.all('City').values()
-    cityState = [c.to_dict() for c in cities_all if c.state_id == state_id]
-    return jsonify(cityState)
+    cities_all = s.cities_all
+    c_list = []
+    for c in cities_all:
+        c_list.append(c.to_dict())
+    return jsonify(c_list)
 
 
 @app_views.route('/cities/<city_id>', methods=['GET'], strict_slashes=False)
@@ -40,8 +42,9 @@ def delete_city(city_id):
     bye_city = storage.get('City', city_id)
     if bye_city is None:
         abort(404)  # if the city_id is not linked to any City object
-    storage.delete(bye_city)
+    bye_city.delete()
     storage.save()
+    storage.reload()
     return jsonify({}), 200  # returns an empty dict with status code 200
 
 
@@ -55,12 +58,11 @@ def create_city(state_id):
     body = request.get_json(silent=True)  # transfrom the HTTP body req to dict
     if body is None:  # if HTTP body req is  not a valid JSON
         return jsonify({"error": "Not a JSON"}), 400
-    elif 'name' not in request.json:  # if dict doesn't contain the key name
+    elif 'name' not in body:  # if dict doesn't contain the key name
         return jsonify({"error": "Missing name"}), 400
-    body['state_id'] = state_id
-    city_new = City(**body)
-    storage.new(city_new)
-    storage.save()
+    name = request.get_json().get('name')
+    city_new = City(name=name, state_id=state_id)
+    city_new.save()
     return jsonify(city_new.to_dict()), 201  # returns new City
 
 
