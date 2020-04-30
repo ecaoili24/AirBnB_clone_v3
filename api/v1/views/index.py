@@ -4,33 +4,20 @@
 from flask import Flask, jsonify
 from api.v1.views import app_views
 from models import storage
-from models.amenity import Amenity
-from models.base_model import BaseModel
-from models.city import City
-from models.place import Place
-from models.review import Review
-from models.state import State
-from models.user import User
-
-app = Flask(__name__)
 
 
-@app_views.route('/status')
+@app_views.route('/status', methods=['GET'], strict_slashes=False)
 def status():
-    return jsonify({
-        "status": "OK"
-        })
+    """Returns the JSON status"""
+    return jsonify({"status": "OK"})
 
 
-@app_views.route('/stats')
-def stat():
+@app_views.route('/stats', methods=['GET'], strict_slashes=False)
+def obj_stat():
     """Creates an endpoint that retrieves the # of each obj by type"""
-    class_all = {"amenities": "Amenity", "cities": "City", "places": "Place",
-                 "reviews": "Review", "states": "State", "users": "User"}
-
-    for key in class_all:
-        class_all[key] = storage.count(class_all[key])
-    return jsonify(class_all)
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000)
+    return jsonify({"amenities": storage.count('Amenity'),
+                    "cities": storage.count('City'),
+                    "places": storage.count('Place'),
+                    "reviews": storage.count('Review'),
+                    "states": storage.count('State'),
+                    "users": storage.count('User')})
