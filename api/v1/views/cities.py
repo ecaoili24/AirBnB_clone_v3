@@ -57,9 +57,9 @@ def create_city(state_id):
         abort(404)
     body = request.get_json(silent=True)  # transfrom the HTTP body req to dict
     if body is None:  # if HTTP body req is  not a valid JSON
-        return "Not a JSON", 400
+        return jsonify({"error": "Not a JSON"}), 400
     elif 'name' not in body:  # if dict doesn't contain the key name
-        return "Missing name", 400
+        return jsonify({"error": "Missing name"}), 400
     name = request.get_json().get('name')
     city_new = City(name=name, state_id=state_id)
     city_new.save()
@@ -71,7 +71,7 @@ def update_city(city_id):
     """Updating an existing City object"""
     body = request.get_json(silent=True)
     if body is None:
-        return "Not a JSON" 400
+        return jsonify({"error": "Not a JSON"}), 400
     obj = storage.get('City', city_id)
     if obj is None:
         abort(404)
