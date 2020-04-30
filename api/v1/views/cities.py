@@ -18,11 +18,10 @@ def get_all_cities(state_id):
     s = storage.get('State', state_id)  # s = states
     if s is None:
         abort(404)
-    cities_all = s.cities_all
-    c_list = []
-    for c in cities_all:
-        c_list.append(c.to_dict())
-    return jsonify(c_list)
+    new_list = []
+    for c in s.cities:  # cities attribute from /models/state.py
+        new_list.append(c.to_dict())
+    return jsonify(new_list)
 
 
 @app_views.route('/cities/<city_id>', methods=['GET'], strict_slashes=False)
