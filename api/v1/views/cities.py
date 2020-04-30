@@ -16,7 +16,7 @@ from models.city import City
 app = Flask(__name__)
 
 
-@app_views.route('/states/<states_id>/cities', methods=['GET'],
+@app_views.route('/states/<state_id>/cities', methods=['GET'],
                  strict_slashes=False)
 def get_cities(state_id=None):
     """List retrieval of all City objects of a State"""
@@ -78,15 +78,15 @@ def create_city(state_id=None):
 @app_views.route('/cities/<city_id>', methods=['PUT'], strict_slashes=False)
 def update_city(city_id=None):
     """Updating an existing City object"""
-    objects = storage.get("City", city_id)
-    if objects is None:
+    obj = storage.get('City', city_id)
+    if obj is None:
         abort(404)
-    body = request.get_json(force=True)
+    body = request.get_json()
     if body is None:
         return jsonify({"error": "Not a JSON"}), 400
-    ignore_keys = ['state_id', 'created_at', 'updated_at']
+    ignore_keys = ['id', 'state_id', 'created_at', 'updated_at']
     for key, value in body.items():
         if key not in ignore_keys:
-            setattr(city, key, value, id)
+            setattr(obj, key, value)
     storage.save()
-    return jsonify(city.to_dict()), 200
+    return jsonify(obj.to_dict()), 200
