@@ -79,7 +79,7 @@ class DBStorage:
         """returns object with key matching cls and id"""
         if cls is not None and id is not None:
             test = self.all(cls)
-            word = "{}.{}".format(cls.__name__, id)
+            word = "{}.{}".format(cls, id)
             for key, val in test.items():
                 if key == word:
                     return (val)
