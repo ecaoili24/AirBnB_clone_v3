@@ -1,21 +1,17 @@
 #!/usr/bin/python3
 """
-A script that starts a Flask web application.
 Create a new view for Amenity objects that handles
 all default RESTful API actions
 """
-
 import os
 from flask import Flask, jsonify, abort, request
 from models import storage
 from api.v1.views import app_views
 from models.user import User
 
-app = Flask(__name__)
-
 
 @app_views.route('/users', methods=['GET'], strict_slashes=False)
-def get_users(state_id=None):
+def get_users(state_id):
     """List retrieval of all User objects of a State"""
     users_all = storage.all('User')
     usersLIST = []
@@ -26,7 +22,7 @@ def get_users(state_id=None):
 
 @app_views.route('/users/<user_id>', methods=['GET'],
                  strict_slashes=False)
-def user_retrieval(user_id=None):
+def user_retrieval(user_id):
     """Retrieval of User objects with linked amenity ids"""
     user_dict = storage.all('User')
     user = user_dict.get('User' + "." + user_id)
@@ -38,7 +34,7 @@ def user_retrieval(user_id=None):
 
 @app_views.route('/users/<user_id>', methods=['DELETE'],
                  strict_slashes=False)
-def delete_user(user_id=None):
+def delete_user(user_id):
     """Deletes a User object"""
     objects = storage.get('User', user_id)
     if objects is None:
@@ -55,7 +51,7 @@ def create_user():
     body = request.get_json()  # transfrom the HTTP body request to dict
     if not body:  # if HTTP body req is  not a valid JSON
         abort(400, {"Not a JSON"})  # raise 400 err with the message Not a JSON
-    if 'email' not in body:  # if the dict doesn’t contain the key email
+    if 'email' not in body:  # if the dict doesn't contain the key email
         abort(400, {"Missing email"})  # raise err and message
     if 'password' not in body:  # if the dict doesn't contain the key passwd
         abort(400, {"Missing password"})  # raise err and message
@@ -69,7 +65,7 @@ def create_user():
 
 @app_views.route('/users/<user_id>', methods=['PUT'],
                  strict_slashes=False)
-def update_user(user_id=None):
+def update_user(user_id):
     """Updating an existing Amenity object"""
     body = request.get_json()
     if not body:
