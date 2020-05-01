@@ -1,10 +1,8 @@
 #!/usr/bin/python3
-
 """
 Create a new view for City objects that handles
 all default RESTful API actions:
 """
-
 from api.v1.views import app_views
 from flask import Flask, jsonify, abort, request
 from models import storage
@@ -57,9 +55,9 @@ def create_city(state_id):
         abort(404)
     body = request.get_json(silent=True)  # transfrom the HTTP body req to dict
     if body is None:  # if HTTP body req is  not a valid JSON
-        return jsonify({"error": "Not a JSON"}), 400
+        abort(400, {"error": "Not a JSON"})
     if body.get("name") is None:  # if dict doesn't contain the key name
-        return jsonify({"error": "Missing name"}), 400
+        abort(400, {"Missing name"})
     body['state_id'] = state_id
     city_new = City(**body)
     storage.new(city_new)
@@ -72,7 +70,7 @@ def update_city(city_id):
     """Updating an existing City object"""
     body = request.get_json(silent=True)
     if body is None:
-        return jsonify({"error": "Not a JSON"}), 400
+        abort(400, {"Not a JSON"})
     obj = storage.get('City', city_id)
     if obj is None:
         abort(404)
