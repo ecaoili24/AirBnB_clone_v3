@@ -3,7 +3,6 @@
 Create a new view for Places objects that handles
 all default RESTful API actions
 """
-
 from flask import Flask, jsonify, abort, request
 from models import storage
 from api.v1.views import app_views
@@ -14,23 +13,20 @@ from models.place import Place
 @app_views.route('/places/<place_id>', methods=['GET'], strict_slashes=False)
 def get_place(place_id=None):
     """List retrieval of all Place objects for a city"""
-    cities_all = storage.all('City')
-    city = cities_all.get('City' + "." + city_id)
-    if city is None:
+    cities_all = storage.all('City', city_id)
+    if city_all is None:
         abort(404)
     placesLIST = []
-    places_all = storage.all('Place')
-    for place in places_all.values():
-        if place.city_id == city_id:
-            placesLIST.append(place.to_dict())
-    return jsonify(placesLIST), 200
+    places_all = storage.all('Place').values()
+    city_p = [p.to_dict() for p in places_all if p.city_id == city_id]
+    return jsonify(city_p)
 
 
 @app_views.route('/places/<place_id>', methods=['GET'],
                  strict_slashes=False)
 def place_retrieval(place_id=None):
     """Retrieval of Place objects with linked place ids"""
-    place = storage.get('Place' + "." + place_id)
+    place = storage.get('Place', place_id)
     if place is None:  # if place_id is not linked to any place obj
         abort(404)  # then, raise 404 error
     else:
@@ -44,9 +40,8 @@ def delete_place(place_id=None):
     objects = storage.get('Place', place_id)
     if objects is None:
         abort(404)  # if the user_id is not linked to any User object
-    else:
-        storage.delete(objects)
-        storage.save()
+    storage.delete(objects)
+    storage.save()
     return jsonify({}), 200  # returns an empty dict with status code 200
 
 
@@ -59,14 +54,14 @@ def create_place(city_id=None):
         abort(404)  # raise a 404 error
     body = request.get_json()  # Flask to transform HTTP request to a dict
     if body is None:  # If the HTTP request body is not valid JSON
-        return jsonify({"error": "Not a JSON"}), 400  # raise err and message
+        abort(400, {"error": "Not a JSON"})  # raise err and message
     if 'user_id' not in body:  # If the dict doesn't contain the key user_id
-        return jsonify({"error": "Missing user_id"}), 400  # raise err
+        abort(400, {"Missing user_id"})  # raise err
     user_object = storage.get('User', body['user_id'])
     if user_object is not None:  # user_id is not linked to any User object
         abort(404)  # raise err
     if 'name' not in body:  # If the dict doesn't contain the key name
-        return jsonifiy({"error": "Missing name"}), 400
+        abort(400, {"Missing name"})
     place_object = Place(city_id=city_id)
     for key, value in body.items():
         setattr(place_object, key, value)
@@ -84,7 +79,7 @@ def update_place(place_id=None):
         abort(404)
     body = request.get_json()
     if body is None:
-        return jsonify({"error": "Not a JSON"}), 400
+        abort(400, {"Not a JSON"})
     ignore_keys = ['id', 'city_id', 'user_id', 'created_at', 'updated_at']
     for key, value in body.items():
         if key not in ignore_keys:
