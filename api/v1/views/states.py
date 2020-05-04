@@ -65,7 +65,7 @@ def put_state_id(state_id):
     """Updates the state object"""
     body = request.get_json(silent=True)
     if body is None:
-        abort(400, {"Not a JSON"})
+        abort(400, "Not a JSON")
     state = storage.get('State', state_id)
     if not state:
         abort(404)
