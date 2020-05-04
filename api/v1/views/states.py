@@ -9,10 +9,9 @@ from api.v1.views import app_views
 from models.state import State
 
 app = Flask(__name__)
-app.url_map.strict_slashes = False
 
 
-@app_views.route('/states/', methods=['GET'])
+@app_views.route('/states', methods=['GET'], strict_slashes=False)
 def states_all():
     """List retrieival of all State objects"""
     states = storage.all('State')
@@ -46,14 +45,14 @@ def del_state_id(state_id):
     return make_response(jsonify({}), 200)
 
 
-@app_views.route('/states/', methods=['POST'])
+@app_views.route('/states', methods=['POST'], strict_slashes=False)
 def post_states():
     """Posts a state object from request"""
     body = request.get_json(silent=True)
     if body is None:
-        abort(400, {"Not a JSON"})
+        abort(400, "Not a JSON")
     if 'name' not in body:
-        abort(400, {"Missing name"})
+        abort(400, "Missing name")
     NEWstate = State(**body)
     storage.new(NEWstate)
     storage.save()
